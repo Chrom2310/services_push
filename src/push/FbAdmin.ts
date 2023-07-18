@@ -1,7 +1,7 @@
 import admin, { AppOptions } from 'firebase-admin';
 import { MessagingOptions } from 'firebase-admin/lib/messaging/messaging-api';
 
-export class fbAdmin {
+export class FbAdmin {
   private admin;
   private readonly options: MessagingOptions = {
     direct_boot_ok: true,
@@ -17,8 +17,15 @@ export class fbAdmin {
       },
     },
   };
+
   constructor(config: AppOptions) {
-    this.admin = admin.initializeApp(config);
+    const currConfig = { ...config };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete currConfig.id;
+    this.admin = admin.initializeApp({
+      credential: admin.credential.cert(currConfig),
+    });
   }
 
   sendTopic = (topic: string, body: any) => {
@@ -45,5 +52,13 @@ export class fbAdmin {
       },
       this.options,
     );
+  };
+  close = async (cbSuccess?: () => void, cbError?: (e: unknown) => void) => {
+    try {
+      await this.admin.delete();
+      cbSuccess?.();
+    } catch (e) {
+      cbError?.(e);
+    }
   };
 }

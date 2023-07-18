@@ -16,3 +16,13 @@ export class TokenQueryDto {
 export class TopicQueryDto {
   title: string;
 }
+
+export class RemoveDocDto {
+  id: string;
+}
+
+export class SendPushDto {
+  tokenId: string;
+  body: any;
+  configId?: string;
+}

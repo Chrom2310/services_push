@@ -54,12 +54,15 @@ export default class LocalDb<Doc> {
     });
   };
 
-  removeDoc(id: string) {
-    fs.unlink(`${this.path}/${id}`, (err) => {
-      if (err) throw 'err file ' + err.message;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.doc.filter((el) => (el.id as string) !== id);
+  removeDoc(id: string): Promise<void> {
+    return new Promise((resolve) => {
+      fs.unlink(`${this.path}/${id}.json`, (err) => {
+        if (err) throw 'err file ' + err.message;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.doc.filter((el) => (el.id as string) !== id);
+        resolve();
+      });
     });
   }
 }
